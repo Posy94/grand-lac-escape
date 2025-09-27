@@ -17,6 +17,7 @@ interface GameState {
   characters: Record<string, Character>;
   gameFlags: Record<string, boolean>;
   timeElapsed: number;
+  selectedCharacter: Character | null;
 }
 
 interface GameStore extends GameState {
@@ -25,6 +26,7 @@ interface GameStore extends GameState {
   changeLocation: (locationId: string) => void;
   setGameFlag: (flag: string, value: boolean) => void;
   makeChoice: (choiceId: string) => void;
+  setSelectedCharacter: (character: Character | null) => void;
   resetGame: () => void;
 }
 
@@ -55,6 +57,7 @@ export const useGameStore = create<GameStore>()(
         characters: initialCharacters,
         gameFlags: {},
         timeElapsed: 0,
+        selectedCharacter: null,
 
         // Actions
         setActiveCharacter: (characterId: string) => {
@@ -87,13 +90,18 @@ export const useGameStore = create<GameStore>()(
           console.log('Choice made:', choiceId);
         },
 
+        setSelectedCharacter: (character: Character | null) => {
+          set({ selectedCharacter: character });
+        },
+
         resetGame: () => {
           set({
             currentLocation: 'maison',
             activeCharacter: 'rik',
             characters: initialCharacters,
             gameFlags: {},
-            timeElapsed: 0
+            timeElapsed: 0,
+            selectedCharacter: null
           });
         }
       }),

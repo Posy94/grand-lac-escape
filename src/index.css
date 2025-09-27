@@ -38,3 +38,13 @@
     @apply bg-gray-500 text-white hover:bg-gray-600;
   }
 }
+
+/* Animations pour CharacterCard */
+@keyframes pulse-orange {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse-orange {
+  animation: pulse-orange 2s infinite;
+}
