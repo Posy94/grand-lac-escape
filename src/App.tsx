@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomeScene } from "./scenes/HomeScene";
 import { LandingPage } from "./components/ui/LandingPage";
 import { CharacterSelectionScene } from "./scenes/CharacterSelectionScene";
+import { RouteGuard } from "./components/RouteGuard";
 
 function App() {
   return (
@@ -10,7 +11,14 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/characters" element={<CharacterSelectionScene />} />
-        <Route path="/home" element={<HomeScene />} />
+        <Route 
+          path="/home" 
+          element={
+            <RouteGuard requireGame={true}>
+              <HomeScene />
+            </RouteGuard>
+          }
+        />
         <Route path="/forest" element={<div>🌲 Forêt - Coming Soon</div>} />
       </Routes>
     </BrowserRouter>

@@ -7,13 +7,15 @@ interface characterCardProps {
     isSelected?: boolean;
     onClick?: (character : Character) => void;
     disabled?: boolean;
+    className?: string;
 }
 
 export const CharacterCard: React.FC<characterCardProps> = ({
     character,
     isSelected = false,
     onClick,
-    disabled = false
+    disabled = false,
+    className = ""
 }) => {
     return (
         <motion.div
@@ -27,6 +29,7 @@ export const CharacterCard: React.FC<characterCardProps> = ({
                     ? 'opacity-50 cursor-not-allowed'
                     : ''
                 }
+                ${className}
             `}
             onClick={() => !disabled && onClick?.(character)}
             whileHover={!disabled ? { y: -4, scale: 1.02 } : {}}

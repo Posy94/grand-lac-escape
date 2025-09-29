@@ -48,3 +48,46 @@
 .animate-pulse-orange {
   animation: pulse-orange 2s infinite;
 }
+
+/* MASQUER LA SCROLLBAR EN GARDANT LE SCROLL */
+.hide-scrollbar {
+  /* Firefox */
+  scrollbar-width: none;
+  
+  /* Internet Explorer et Edge */
+  -ms-overflow-style: none;
+}
+
+/* Webkit (Chrome, Safari, Edge moderne) */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Version plus sophistiquée avec transition */
+.fullscreen-no-scrollbar {
+  /* Masquer uniquement en fullscreen */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.fullscreen-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Style normal quand pas en fullscreen */
+.normal-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.normal-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+}
+
+.normal-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.3);
+  border-radius: 4px;
+}
+
+.normal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.5);
+}

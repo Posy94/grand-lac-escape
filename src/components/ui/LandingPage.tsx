@@ -2,27 +2,48 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import homeImage from './../../assets/images/home-illustration.png';
+import FullscreenButton from '../FullscreenButton';
 
 export function LandingPage() {
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [overlayVisible, setOverlayVisible] = useState(true);
+  const [showScrollPrompt, setShowScrollPrompt] = useState(false);
   
   // Parallaxe et révélation progressive de l'image
   const y = useTransform(scrollY, [0, 500], [0, -100]);
   const overlayOpacity = useTransform(scrollY, [0, 200, 400], [0.8, 0.4, 0.1]);
   const imageOpacity = useTransform(scrollY, [0, 300], [0.7, 1]);
 
-  // Animation de révélation de l'image après 3 secondes
+  // Animation de révélation de l'image après 8 secondes
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const revealTimer = setTimeout(() => {
       setOverlayVisible(false);
     }, 8000);
-    return () => clearTimeout(timer);
+
+    // Prompt de scroll après la révélation
+    const scrollTimer = setTimeout(() => {
+      setShowScrollPrompt(true);
+    }, 10000);
+
+    return () => {
+      clearTimeout(revealTimer);
+      clearTimeout(scrollTimer);
+    };
   }, []);
 
+  const scrollToContent = () => {
+    document.getElementById('game-content')?.scrollIntoView({
+      behavior: 'smooth'
+    });
+  };
+
   return (
+    <>
+    <FullscreenButton />
+       
     <div className="bg-gradient-to-br from-slate-900 via-orange-950 to-green-950">
       {/* HERO SECTION */}
       <motion.div className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -140,261 +161,195 @@ export function LandingPage() {
             ))}
         </div>
 
-        {/* CONTENU PRINCIPAL */}
-        <motion.div
-          className="relative z-10 container mx-auto px-4"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* TITRE */}
-          <motion.div className="text-center mb-12" variants={itemVariants}>
-            <motion.h1
-              className="text-6xl md:text-8xl font-bold text-white mb-6 drop-shadow-2xl"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, ease: 'easeOut', delay: 0.5 }}
+        <div className="absolute bottom-0 left-0 right-0 z-20">
+          <div className="bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-24 pb-12">
+            <motion.div 
+              className="container mx-auto px-4 text-center"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 9, duration: 1.2 }} // Après la révélation
             >
-              Grand-
-              <motion.span
-                className="inline-block text-fire-500"
-                animate={{
-                  textShadow: [
-                    '0 0 20px #f97316, 0 0 40px #ea580c',
-                    '0 0 30px #f97316, 0 0 60px #ea580c',
-                    '0 0 20px #f97316, 0 0 40px #ea580c',
-                  ],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
+              {/* 👑 TITRE AVEC POLICES PERSONNALISÉES */}
+              <motion.h1
+                className="font-title text-4xl md:text-6xl lg:text-7xl font-bold 
+                          text-amber-100 mb-4 tracking-wider
+                          drop-shadow-[3px_3px_6px_rgba(0,0,0,0.8)]"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 9.3, duration: 1 }}
               >
-                Lac
-              </motion.span>
-            </motion.h1>
-
-            <motion.p
-              className="text-xl md:text-2xl text-smoke-100 max-w-2xl mx-auto leading-relaxed drop-shadow-lg"
-              variants={itemVariants}
-            >
-              Quand les flammes ravagent votre village, chaque seconde compte.
-              <motion.span
-                className="inline-block ml-2"
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                Chaque choix peut sauver une vie... ou la condamner.
-              </motion.span>
-            </motion.p>
-          </motion.div>
-
-          {/* BOUTON CTA */}
-          <motion.div className="text-center mb-16" variants={itemVariants}>
-            <motion.button
-              onClick={() => navigate('/characters')}
-              className="group relative bg-fire-600 hover:bg-fire-700 text-white text-xl font-bold py-4 px-12 rounded-xl shadow-2xl overflow-hidden"
-              whileHover={{
-                scale: 1.05,
-                boxShadow:
-                  '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 50px rgba(249, 115, 22, 0.4)',
-              }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{
-                delay: 1.5,
-                duration: 0.8,
-                type: 'spring',
-                stiffness: 200,
-              }}
-            >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: '100%' }}
-                transition={{ duration: 0.8 }}
-              />
-
-              <motion.span
-                className="relative flex items-center gap-3"
-                whileHover={{ x: 5 }}
-              >
-                🔥 Commencer l'Aventure
+                La fuite de{' '}
                 <motion.span
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="font-medieval text-5xl md:text-7xl lg:text-8xl 
+                            text-amber-300 inline-block
+                            drop-shadow-[2px_2px_4px_rgba(0,0,0,0.9)]"
+                  animate={{
+                    textShadow: [
+                      '0 0 20px #f59e0b, 0 0 40px #d97706',
+                      '0 0 30px #f59e0b, 0 0 60px #d97706',
+                      '0 0 20px #f59e0b, 0 0 40px #d97706',
+                    ],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
                 >
-                  →
+                  Grand-Lac
                 </motion.span>
-              </motion.span>
-            </motion.button>
-          </motion.div>
+              </motion.h1>
+
+              {/* 📖 SOUS-TITRE */}
+              <motion.p
+                className="font-narrative text-amber-200 text-lg md:text-xl 
+                          mb-8 max-w-3xl mx-auto leading-relaxed
+                          drop-shadow-[1px_1px_2px_rgba(0,0,0,0.7)]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 9.8, duration: 1 }}
+              >
+                Quand les flammes ravagent votre village, chaque seconde compte.
+                <motion.span
+                  className="block mt-2 text-amber-300 font-medium"
+                  animate={{ opacity: [1, 0.7, 1] }}
+                  transition={{ duration: 2.5, repeat: Infinity }}
+                >
+                  Chaque choix peut sauver une vie... ou la condamner.
+                </motion.span>
+              </motion.p>
+
+              
+            </motion.div>
+          </div>
+        </div>
+
+        {/* 📜 INVITATION AU SCROLL */}
+        <motion.div
+          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 
+                    cursor-pointer group"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ 
+            opacity: showScrollPrompt ? 1 : 0,
+            y: showScrollPrompt ? 0 : 20
+          }}
+          onClick={scrollToContent}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex flex-col items-center text-amber-200/80 
+                        group-hover:text-amber-100 transition-all duration-300">
+            <motion.p 
+              className="font-ui text-sm mb-2 font-medium"
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Découvrez l'histoire
+            </motion.p>
+            
+            <ChevronDownIcon 
+              className="w-6 h-6 animate-bounce-gentle 
+                        group-hover:text-amber-300 transition-colors duration-300" 
+            />
+          </div>
         </motion.div>
       </motion.div>
 
-      {/* SECTION À PROPOS */}
-      <motion.section
-        className="py-20 bg-gradient-to-b from-fire-900/90 to-green-800/90 backdrop-blur-sm"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-      >
-        <div className="container mx-auto px-4">
+      {/* 📖 CONTENU ADDITIONNEL - NOUVELLES SECTIONS */}
+      <section id="game-content" className="min-h-screen bg-slate-900/95 backdrop-blur-sm">
+        <div className="container mx-auto px-6 py-20">
+          
+          {/* À PROPOS DU JEU */}
+          <motion.div 
+            className="max-w-4xl mx-auto mb-20"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="font-title text-4xl md:text-5xl font-bold 
+                          text-amber-100 text-center mb-12">
+              Une Histoire à{' '}
+              <span className="font-medieval text-amber-300">Façonner</span>
+            </h2>
+            
+            <div className="bg-slate-800/60 backdrop-blur-sm p-8 md:p-12 rounded-2xl 
+                          border border-amber-700/30 shadow-2xl">
+              <p className="font-narrative text-amber-50/90 leading-relaxed text-center
+                          text-lg md:text-xl">
+                Au cœur d'une contrée mystique, votre famille doit fuir face à un danger imminent. 
+                Incarnez tour à tour différents membres de la famille et prenez des décisions 
+                cruciales qui influenceront le cours de votre évasion vers le légendaire Grand Lac.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* PERSONNAGES */}
           <motion.div
-            className="max-w-4xl mx-auto text-center"
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
+            className="mb-20"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-              Une Histoire de <span className="text-fire-500">Survie</span>
+            <h2 className="font-title text-4xl font-bold text-amber-100 text-center mb-16">
+              Les <span className="font-medieval text-amber-300">Protagonistes</span>
             </h2>
-            <p className="text-xl text-smoke-100 leading-relaxed mb-8">
-              L'incendie qui ravage Grand-Lac n'est que le début. Suivez la
-              famille de Rik, Suzana, Eda et Karl dans leur fuite désespérée.
-              Chaque décision que vous prendrez influencera leur destin et celui
-              des habitants du village.
-            </p>
-            <p className="text-lg text-smoke-200 leading-relaxed">
-              Un récit interactif où vos choix comptent vraiment. Serez-vous
-              capable de tous les sauver ?
-            </p>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { name: 'Le Père', desc: 'Protecteur déterminé, ses choix guideront la famille vers la sécurité.' },
+                { name: 'La Mère', desc: 'Sage et intuitive, elle maintient l\'unité familiale dans l\'adversité.' },
+                { name: 'L\'Enfant', desc: 'Innocent mais perspicace, son regard change tout.' }
+              ].map((character, index) => (
+                <motion.div
+                  key={character.name}
+                  className="bg-slate-800/60 p-8 rounded-xl border border-amber-700/30 
+                           text-center hover:bg-slate-800/80 transition-all duration-500
+                           transform hover:scale-105 hover:shadow-2xl 
+                           hover:shadow-amber-500/10 group"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 + index * 0.15 }}
+                >
+                  <h3 className="font-title text-2xl font-semibold text-amber-200 mb-6
+                                group-hover:text-amber-100 transition-colors duration-300">
+                    {character.name}
+                  </h3>
+                  <p className="font-narrative text-amber-100/80 leading-relaxed text-base
+                               group-hover:text-amber-50/90 transition-colors duration-300">
+                    {character.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* CTA FINAL */}
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.button 
+              onClick={() => navigate('/characters')}
+              className="font-title bg-gradient-to-r from-amber-700 to-amber-600 
+                       hover:from-amber-600 hover:to-amber-500 
+                       text-white px-16 py-6 rounded-2xl text-2xl font-bold
+                       shadow-2xl hover:shadow-amber-500/25 transition-all duration-400
+                       transform hover:scale-110 active:scale-95"
+              whileHover={{ 
+                boxShadow: '0 30px 60px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(245, 158, 11, 0.3)'
+              }}
+            >
+              🚪 Entrer dans l'Aventure
+            </motion.button>
           </motion.div>
         </div>
-      </motion.section>
-
-      {/* SECTION PERSONNAGES */}
-      <motion.section
-        className="py-20 bg-green-800/80"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-      >
-        <div className="container mx-auto px-4">
-          <motion.h2
-            className="text-4xl md:text-5xl font-bold text-white text-center mb-16"
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            Rencontrez la <span className="text-fire-500">Famille</span>
-          </motion.h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {characters.map((character, index) => (
-              <motion.div
-                key={character.name}
-                className="bg-green-700/50 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-green-700/80 transition-colors"
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="text-4xl mb-4">{character.emoji}</div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  {character.name}
-                </h3>
-                <p className="text-fire-400 mb-3">{character.role}</p>
-                <p className="text-smoke-200 text-sm">
-                  {character.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* CTA FINAL */}
-      <motion.section
-        className="py-16 bg-gradient-to-b from-green-800/90 to-fire-900/90 text-center"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-      >
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <h3 className="text-3xl font-bold text-white mb-6">
-            Prêt à changer leur destin ?
-          </h3>
-          <motion.button
-            onClick={() => navigate('/characters')}
-            className="bg-fire-600 hover:bg-fire-700 text-white text-lg font-bold py-3 px-10 rounded-lg shadow-xl"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            ⚡ Jouer Maintenant
-          </motion.button>
-        </motion.div>
-      </motion.section>
+      </section>
     </div>
+    </>
   );
-}
-
-// DONNÉES DES PERSONNAGES
-const characters = [
-  {
-    name: "Rik",
-    role: "Le Père Protecteur", 
-    emoji: "👨‍🌾",
-    description: "Fermier courageux, il ferait tout pour sa famille"
-  },
-  {
-    name: "Suzana", 
-    role: "La Mère Sage",
-    emoji: "👩‍🏫", 
-    description: "Érudite et stratège, elle connaît les secrets du village"
-  },
-  {
-    name: "Eda",
-    role: "L'Adolescente Rebelle",
-    emoji: "👧",
-    description: "16 ans, déterminée et mystérieuse"
-  },
-  {
-    name: "Karl",
-    role: "Le Petit Frère",
-    emoji: "👦", 
-    description: "12 ans, curieux et plein d'espoir malgré la catastrophe"
-  }
-];
-
-// VARIANTES D'ANIMATION (inchangées)
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.4,
-      delayChildren: 0.3,
-      duration: 1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 40, 
-    filter: 'blur(4px)' 
-  },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { 
-      duration: 1, 
-      ease: "easeOut" as const  // 🎯 CORRECTION ICI
-    }
-  }
 };
