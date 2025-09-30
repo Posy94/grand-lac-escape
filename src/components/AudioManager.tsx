@@ -1,48 +1,46 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface AudioManagerProps {
     backgroundMusic?: string;
     soundEffect?: string;
     volume?: number;
+    loop?: boolean;
+    autoplay?: boolean;
 }
 
 export const AudioManager: React.FC<AudioManagerProps> = ({
     backgroundMusic,
     soundEffect,
-    volume = 0.5
+    volume = 0.3,
+    loop = true,
+    autoplay = false
 }) => {
-  // 🔇 Version silencieuse temporaire
-  if (!backgroundMusic && !soundEffect) {
-    return null;
-  }
-
   const bgMusicRef = useRef<HTMLAudioElement | null>(null);
   const sfxRef = useRef<HTMLAudioElement | null>(null);
 
   // 🎵 Gestion musique de fond
   useEffect(() => {
-    if (backgroundMusic) {
-      // Arrêter la musique précédente
-      if (bgMusicRef.current) {
-        bgMusicRef.current.pause();
+    if (backgroundMusic && bgMusicRef.current) {
+      const audio = bgMusicRef.current;
+
+      audio.volume = volume;
+      audio.loop = loop;
+      audio.src = `/assets/audio/music/${backgroundMusic}`;
+
+      if (autoplay) {
+        // Lecture automatique
+        const playPromise = audio.play();
+        playPromise.catch(error => {
+          console.log('🔇 Autoplay bloqué, attendre interaction utilisateur:', error.message);
+        });
       }
 
-      // Créer nouvelle instance audio
-      bgMusicRef.current = new Audio(`/assets/audio/${backgroundMusic}`);
-      bgMusicRef.current.volume = volume;
-      bgMusicRef.current.loop = true;
-
-      // Jouer avec gestion d'erreur
-      bgMusicRef.current.play().catch(console.warn);
+      return () => {
+        audio.pause();
+        audio.currentTime = 0;
+      };
     }
-
-    return () => {
-      if (bgMusicRef.current) {
-        bgMusicRef.current.pause();
-        bgMusicRef.current = null;
-      }
-    };
-  }, [backgroundMusic, volume]);
+  }, [backgroundMusic, volume, loop, autoplay]);
 
   // 🔊 Gestion effets sonores
   useEffect(() => {

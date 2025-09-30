@@ -47,6 +47,8 @@ export default {
       animation: {
         'bounce-gentle': 'bounce-gentle 2s infinite',
         'fade-in-up': 'fade-in-up 0.8s ease-out',
+        'flaming-text': 'flaming-text 4s ease-in-out infinite',
+        'ember': 'ember 2s linear infinite'
       },
       keyframes: {
         'bounce-gentle': {
@@ -56,9 +58,37 @@ export default {
         'fade-in-up': {
           '0%': { opacity: '0', transform: 'translateY(30px)' },
           '100%': { opacity: '1', transform: 'translateY(0px)' },
+        },
+        'flaming-text': {
+          '0%, 100%': {
+            filter: 'brightness(1.1) contrast(1.05)',
+            transform: 'scale(1)',
+          },
+          '25%': {
+            filter: 'brightness(1.2) contrast(1.1)',
+            transform: 'scale(1.02)',
+          },
+          '50%': {
+            filter: 'brightness(1.3) contrast(1.2)',
+            transform: 'scale(1.05)',
+          },
+          '75%': {
+            filter: 'brightness(1.2) contrast(1.1)',
+            transform: 'scale(1.02)',
+          },
+        },
+        'ember': {
+          '0%': {
+            opacity: '1',
+            transform: 'translateY(0) translateX(0)',
+          },
+          '100%': {
+            opacity: '0',
+            transform: 'translateY(-50px) translateX(10px)',
+          },
         }
       }
-    },
+    }
   },
   plugins: [],
 }
